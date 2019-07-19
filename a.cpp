@@ -102,14 +102,18 @@ public:
 	void generate_encrypted_message(int m,agent A)
 	{
 		Q=encrypt(m,A.c,A.n);
-		cout<<"Q:"<<Q<<endl;
+		// cout<<"Q:"<<Q<<endl;
 	}
 
 	void decrpyt_message_from(agent A)
 	{
 		Qhat=A.Q;
 		mhat=decrpyt(Qhat);
-		cout<<"Mhat:"<<mhat<<endl;
+		// cout<<"Mhat:"<<mhat<<endl;
+	}
+	int get_mhat()
+	{
+		return mhat;
 	}
 };
 
@@ -135,19 +139,18 @@ int main(int argc, char const *argv[])
 
 
 	agent1.generate_key(false);
-	agent1.print_key(2871);
-	agent2.generate_encrypted_message(m,agent1);
+	
 	cout<<"M:"<<m<<"\t";
 	agent1.decrpyt_message_from(agent2);
-
-	// for(int i=0;i<10000;i++)
-	// {
-	// 	agent1.generate_key(false);
-	// 	// agent1.print_key(2871);
-	// 	agent2.generate_encrypted_message(419,agent1);
-	// 	A[agent2.Q]++;
-	// 	usleep(10);	
-	// }
+	for(int i=0;i<25;i++)
+	{
+		agent2.generate_encrypted_message(i,agent1);
+		agent2.Q=agent2.Q%43;
+		agent1.decrpyt_message_from(agent2);
+		cout<<"M:"<<i<<"\tJ:"<<agent2.Q<<"\tMhat:"<<agent1.get_mhat()%43<<endl;
+		usleep(10);	
+	}
+	agent1.print_key(2971);
 	// print(A,1334);
 	
 	
