@@ -83,7 +83,7 @@ public:
 	int Q,Qhat;
 
 	agent(int robot){robot_id=robot;};
-
+ 
 	void generate_key(bool verbose)
 	{
 		compute_pvt();
@@ -133,6 +133,7 @@ int main(int argc, char const *argv[])
 	    /* using nano-seconds instead of seconds */
     srand((time_t)ts.tv_nsec);
 
+
 	agent agent1(1),agent2(2);
 	int A[1334]={0};
 	int m=419;
@@ -140,15 +141,44 @@ int main(int argc, char const *argv[])
 
 	agent1.generate_key(false);
 	
-	cout<<"M:"<<m<<"\t";
+	// cout<<"M:"<<m<<"\t";
 	agent1.decrpyt_message_from(agent2);
-	for(int i=0;i<25;i++)
+	
+	for(int i=30;i<44;i++)
 	{
-		agent2.generate_encrypted_message(i,agent1);
-		agent2.Q=agent2.Q%43;
+		m=6;
+		agent2.generate_encrypted_message(m,agent1);
+		agent2.Q=agent2.Q%i;
 		agent1.decrpyt_message_from(agent2);
-		cout<<"M:"<<i<<"\tJ:"<<agent2.Q<<"\tMhat:"<<agent1.get_mhat()%43<<endl;
-		usleep(10);	
+		cout<<"I:"<<i<<"\tM:"<<m<<"\tJ:"<<agent2.Q<<"\tMhat:"<<agent1.get_mhat()%i;
+		if (agent1.get_mhat()%i==m)
+			cout<<"\t\tMatch: True";
+		else
+			cout<<"\t\tMatch: False";
+		cout<<endl;
+
+		m=7;
+		agent2.generate_encrypted_message(m,agent1);
+		agent2.Q=agent2.Q%i;
+		agent1.decrpyt_message_from(agent2);
+		cout<<"I:"<<i<<"\tM:"<<m<<"\tJ:"<<agent2.Q<<"\tMhat:"<<agent1.get_mhat()%i;
+		if (agent1.get_mhat()%i==m)
+			cout<<"\t\tMatch: True";
+		else
+			cout<<"\t\tMatch: False";
+		cout<<endl;
+
+		m=35;
+		agent2.generate_encrypted_message(m,agent1);
+		agent2.Q=agent2.Q%i;
+		agent1.decrpyt_message_from(agent2);
+		cout<<"I:"<<i<<"\tM:"<<m<<"\tJ:"<<agent2.Q<<"\tMhat:"<<agent1.get_mhat()%i;
+		if (agent1.get_mhat()%i==m)
+			cout<<"\t\tMatch: True";
+		else
+			cout<<"\t\tMatch: False";
+		cout<<endl<<endl;
+		// usleep(10);	
 	}
 	agent1.print_key(2971);
 	// print(A,1334);
