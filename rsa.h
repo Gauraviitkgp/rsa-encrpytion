@@ -1,11 +1,18 @@
+#ifndef __RSA_H__ // include guard
+#define __RSA_H__
+
 #include <iostream>
-#ifndef RSA_H // include guard
-#define RSA_H
+#include <array>
+#include <iterator>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
 namespace 
 {
-	int primes[]={2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577, 587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677, 683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997}
-	
-	int count_nonzeros=0;
+	std::vector<int> primes = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577, 587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677, 683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997};
+	int total_primes = primes.size();
 	
 	void printarray(int A[],int size)
 	{
@@ -13,15 +20,38 @@ namespace
 			cout<<"A["<<i<<"]:"<<A[i]<<endl;
 	}
 
-	void print_list_of_available_ops()
+	void compute_all_possible_pairs(int capacity, std::vector<int>& p, std::vector<int>& q,bool verbose)
 	{
-		
+		int flag=0;
+		int i=0;
+		for (int j = primes.size()-1; i < j; )
+		{
+			if (primes[i]*primes[j]>capacity)
+			{
+				if(flag)
+				{
+					p.push_back(primes[i-1]);
+					q.push_back(primes[j]);
+					if(verbose)
+						cout<<"n:"<<p[p.size()-1]*q[q.size()-1]<<"\tp:"<<p[p.size()-1]<<"\tq:"<<q[q.size()-1]	<<endl;
+				}
+				j--;
+				flag=0;
+			}
+			else
+			{
+				flag=1;
+				i++;
+			}
+		}
+
+		// }
+		cout<<"Done";
 	}
 
-
-	void mappings(int map[], int size, bool print_zeros)
+	int mappings(int map[], int size, bool print_zeros)
 	{
-		count_nonzeros=0;
+		int count_nonzeros=0;
 		if (print_zeros)
 			printarray(map,size);
 		else
@@ -32,17 +62,25 @@ namespace
 	            {
 	                cout<<"map["<<i<<"]:"<<map[i]<<endl;
 	                count_nonzeros++;
-	            }
-		     
+	            } 
 		    }
-
 		}
+		return count_nonzeros;
 	}
 
 	int count_non_zeros_array(int A[], int k)
 	{
 	    int count=0;
 		for (int i = 0; i < k; i++)
+	        if(A[i]!=0)
+	            count++;
+	    return count;
+	}
+
+	int count_non_zeros_vec(std::vector<int>& A)
+	{
+	    int count=0;
+		for (int i = 0; i < A.size(); i++)
 	        if(A[i]!=0)
 	            count++;
 	    return count;
@@ -85,9 +123,6 @@ namespace
 	}
 	
 
-	int decrpyt(int Qhat)
-	{
-		return encrypt(Qhat,d,n);
-	}
 
 }
+#endif
