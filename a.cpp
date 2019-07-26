@@ -7,14 +7,36 @@
 #define ll long long
 using namespace std;
 
+#define PP 31
+#define QP 43
 
+int count_nonzeros=0;
 
-void printA(int A[], int k)
+void printA(int A[], int k, bool print_zeros)
 {
+    count_nonzeros=0;
 	for (int i = 0; i < k; i++)
 	{
-		cout<<"I:"<<i<<"\t\tA:"<<A[i]<<endl;
+	    if(print_zeros)
+            cout<<"I:"<<i<<"\t\tA:"<<A[i]<<endl;
+        else
+        {
+            if(A[i]!=0)
+            {
+                cout<<"I:"<<i<<"\t\tA:"<<A[i]<<endl;
+                count_nonzeros++;
+            }
+        }
+
 	}
+}
+
+void countA(int A[], int k)
+{
+    count_nonzeros=0;
+	for (int i = 0; i < k; i++)
+        if(A[i]!=0)
+            count_nonzeros++;
 }
 
 
@@ -23,8 +45,8 @@ class agent
 private:
 	int p,q,phin,d;
 	int mhat;
-    int *coprimes, no_coprimes=0;
-
+    int *coprimes=NULL;
+    int no_coprimes=0;
 	bool checkcoprime(int a, int b)
 	{
 	    if ( __gcd(a, b) == 1)
@@ -56,8 +78,8 @@ private:
 
 	void compute_pvt()
 	{
-		p=31;
-		q=43;
+		p=PP;
+		q=QP;
 		n=p*q;
 		phin=(p-1)*(q-1);
 		coprimes=new int[n];
@@ -134,13 +156,15 @@ public:
 		// cout<<"Mhat:"<<mhat<<endl;
 	}
 
-	void get_decrypted_all_msg(int msg)
+	void get_decrypted_all_msg(int msg, int A[], bool verbose)
 	{
 	    for(int i=0; i < no_coprimes; i++)
         {
             c=coprimes[i];
             int enc=encrypt(msg,c,n);
-            cout<<"c:"<<c<<"\tmsg:"<<msg<<"\tenc:"<<enc<<endl;
+            if(verbose)
+                cout<<"i:"<<i<<"\tc:"<<c<<"\tmsg:"<<msg<<"\tenc:"<<enc<<endl;
+            A[enc]++;
         }
 	}
 	int get_mhat()
@@ -150,6 +174,14 @@ public:
 };
 
 
+void message_to_encryptionspace(int m, agent agent1, agent agent2, int A[], bool verbose)
+{
+	cout<<"M:"<<m;
+	agent1.decrpyt_message_from(agent2);
+	agent1.get_decrypted_all_msg(m,A,verbose);
+    countA(A,PP*QP+1);
+	cout<<"\tNon Zeros:"<<count_nonzeros<<endl;
+}
 
 int main(int argc, char const *argv[])
 {
@@ -160,16 +192,74 @@ int main(int argc, char const *argv[])
     //
 
 	agent agent1(1),agent2(2);
-	int A[1334]={0};
-	int m=419;
-
-
 	agent1.generate_key(false);
+	int A[PP*QP+1]={0};
 
 	// cout<<"M:"<<m<<"\t";
-	agent1.decrpyt_message_from(agent2);
-	agent1.get_decrypted_all_msg(2);
+    int K[24], k=0;
+    cout<<"Printing total mappings for each message "<<endl;
+    for(int i=0; i <PP*QP;i++)
+    {
+        int A[PP*QP+1]={0};
+        message_to_encryptionspace(i,agent1,agent2,A,false);
+        if(count_nonzeros==4)
+            K[k++]=i;
+    }
 
+    cout<<"Printing mappings for msg=4 "<<endl;
+    for(int j=0;j<k;j++)
+    {
+        int A[PP*QP+1]={0};
+        message_to_encryptionspace(K[j],agent1,agent2,A,false);
+        printA(A,PP*QP+1,false);
+        cout<<endl;
+    }
+
+
+    /*
+    int B[PP*QP+1]={0};
+    message_to_encryptionspace(3,agent1,agent2,B,false);
+    printA(B,1334,false);
+
+    int C[PP*QP+1]={0};
+    message_to_encryptionspace(9,agent1,agent2,C,false);
+    printA(C,1334,false);
+
+    int D[PP*QP+1]={0};
+    message_to_encryptionspace(10,agent1,agent2,D,false);
+    printA(D,1334,false);
+    */
+	/*
+	m=2;
+	cout<<"M:"<<m<<endl;
+	agent1.decrpyt_message_from(agent2);
+	agent1.get_decrypted_all_msg(m,A,false);
+    printA(A,1334,false);
+	cout<<"Non Zeros:"<<count_nonzeros<<endl<<endl;
+
+    m=3;
+    cout<<"M:"<<m<<endl;
+	A[1334]={0};
+	agent1.get_decrypted_all_msg(m,A,false);
+    printA(A,1334,false);
+	cout<<"Non Zeros:"<<count_nonzeros<<endl<<endl;
+
+    m=4;
+    cout<<"M:"<<m<<endl;
+	A[1334]={0};
+	agent1.get_decrypted_all_msg(m,A,false);
+    printA(A,1334,false);
+	cout<<"Non Zeros:"<<count_nonzeros<<endl<<endl;
+
+	m=37;
+    cout<<"M:"<<m<<endl;
+	A[1334]={0};
+	agent1.get_decrypted_all_msg(m,A,false);
+    printA(A,1334,false);
+	cout<<"Non Zeros:"<<count_nonzeros<<endl<<endl;
+	*/
+
+    /*
 	for(int i=30;i<44;i++)
 	{
 		m=6;
@@ -208,7 +298,7 @@ int main(int argc, char const *argv[])
 	}
 	agent1.print_key(2971);
 	// print(A,1334);
-
+    */
 
 
 	// agent1.get_message_from(agent2);
