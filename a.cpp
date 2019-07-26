@@ -141,36 +141,46 @@ int main(int argc, char const *argv[])
 	std::vector<int> poss_q;//possible q's
 
 	ofstream myfile;
-	myfile.open("const_max_channel_cap3000_primes_vs_sizeofequivalent_class.txt");
+	myfile.open("max_channel_capvs_sizeofequivalent_class.txt");
 
-	compute_all_possible_pairs(CHANNEL_CAP, poss_p, poss_q,false);
+	
 
 	
 	std::vector<int> non_zeros(agent1.n);
 
 	cout<<"Printing total mappings for each message "<<endl;
-	for (int i = 0; i < poss_p.size(); i++)
+	for (int j = 500; j < 4000; j+=250)
 	{
-		Q_chosen = poss_p[i];
-		P_chosen = poss_q[i];
-		
-		agent1.generate_static_keys();
-		
-		std::vector<int> maps(agent1.n);
-		
-		cout<<"I:"<<i<<"\tPrimes:"<<Q_chosen<<","<<P_chosen<<"\tn:"<<Q_chosen*P_chosen<<endl;
-		
+		/* code */
+		CHANNEL_CAP=j;
+		poss_p.clear();
+		poss_q.clear();
+		compute_all_possible_pairs(CHANNEL_CAP, poss_p, poss_q,false);
+		std::vector<int> maxeqsizes;
+		for (int i = 0; i < poss_p.size(); i++)
+		{
+			Q_chosen = poss_p[i];
+			P_chosen = poss_q[i];
+			
+			agent1.generate_static_keys();
+			
+			std::vector<int> maps(agent1.n);
+			
+			// cout<<"I:"<<i<<"\tPrimes:"<<Q_chosen<<","<<P_chosen<<"\tn:"<<Q_chosen*P_chosen<<endl;
+			
 
-		for(int i=0; i <agent1.n;i++)
-	    {
-	        std::fill(maps.begin(),maps.end(), 0);
-	        get_all_mappings_of_msg(i,agent1, maps, false);
-	        non_zeros.push_back(count_non_zeros_vec(maps));
-	        // cout<<"M:"<<i<<"\tNon_zeros:"<<count_non_zeros_vec(maps)<<endl;
-	    }
-	    cout<<"Max Equivalence class size:";
-	    cout<<*std::max_element(non_zeros.begin(),non_zeros.end())<<endl<<endl;
-	    myfile<<Q_chosen<<" "<<P_chosen<<" "<<*std::max_element(non_zeros.begin(),non_zeros.end())<<" "<<agent1.n<<endl;
+			for(int i=0; i <agent1.n;i++)
+		    {
+		        std::fill(maps.begin(),maps.end(), 0);
+		        get_all_mappings_of_msg(i,agent1, maps, false);
+		        non_zeros.push_back(count_non_zeros_vec(maps));
+		        // cout<<"M:"<<i<<"\tNon_zeros:"<<count_non_zeros_vec(maps)<<endl;
+		    }
+		    // cout<<"Max Equivalence class size:";
+		    maxeqsizes.push_back(*std::max_element(non_zeros.begin(),non_zeros.end()));
+		}
+		cout<<"Channel_capacity:"<<CHANNEL_CAP<<"\tMax_equivalence size:"<<*std::max_element(maxeqsizes.begin(),maxeqsizes.end())<<endl;
+		myfile<<CHANNEL_CAP<<" "<<*std::max_element(maxeqsizes.begin(),maxeqsizes.end())<<endl;
 	}
 	myfile.close();
     
