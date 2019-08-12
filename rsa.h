@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <chrono>
+#include <set>
 using namespace std;
 using namespace std::chrono;
 
@@ -101,6 +102,20 @@ namespace
 		for (int i = 0; i < A.size(); i++)
 	        if(A[i]!=0)
 	            count++;
+	    return count;
+	}
+
+	int count_non_zeros_vec(std::vector<int>& A,std::vector<int>& K)
+	{
+	    int count=0;
+		for (int i = 0; i < A.size(); i++)
+		{
+	        if(A[i]!=0)
+	        {
+	            count++;
+	            K.push_back(i);
+	        }
+		}
 	    return count;
 	}
 
