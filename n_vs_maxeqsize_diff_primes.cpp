@@ -13,6 +13,8 @@
 using namespace std::chrono;
 using namespace std;
 
+#define FILE false
+
 int CHANNEL_CAP=3000;	
 // #define P_chosen 997
 // #define Q_chosen 17
@@ -164,16 +166,19 @@ int main(int argc, char const *argv[])
 	cout<<"Channel capacity is "<<CHANNEL_CAP<<endl; //By channel cap i mean message capacity
 	cout<<"Chosen P:"<<P_chosen<<" and Chosen Q:"<<Q_chosen<<endl;
 
-	// ofstream myfile;
-	// myfile.open("const_max_channel_cap3000_primes_vs_sizeofequivalent_class.txt");
-
+	if(FILE)
+	{
+		ofstream myfile;
+		myfile.open("const_max_channel_cap3000_primes_vs_sizeofequivalent_class.txt");
+	}
+	
 	
 	cout<<"Computing total Channel capacity "<<endl;
 	poss_p.clear();
 	poss_q.clear();
 
 	t1 = high_resolution_clock::now();
-	compute_all_possible_pairs(CHANNEL_CAP, poss_p, poss_q,false);
+	compute_opt_possible_pairs(CHANNEL_CAP, poss_p, poss_q,false);
 	t2 = high_resolution_clock::now();
 
 	std::vector<int> maxeqsizes;
@@ -193,8 +198,9 @@ int main(int argc, char const *argv[])
 		agent1.generate_static_keys();
 		t4 = high_resolution_clock::now();
 		compute_equivalence_size(agent1, maxeqsizes, true);
-		// myfile<<P_chosen<<","<<Q_chosen<<" "<<maxeqsizes[maxeqsizes.size()-1]<<" "<<Q_chosen*P_chosen<<endl;
-		t5 = high_resolution_clock::now();
+		if (FILE)
+			myfile<<P_chosen<<","<<Q_chosen<<" "<<maxeqsizes[maxeqsizes.size()-1]<<" "<<Q_chosen*P_chosen<<endl;
+		// t5 = high_resolution_clock::now();
 
 	}
 	// printvec(maxeqsizes);
@@ -204,7 +210,8 @@ int main(int argc, char const *argv[])
 	cout<<"Time required for computation of private static keys:"<<(float)(duration_cast<microseconds>( t4 - t3 ).count())/1000000<<" s"<<endl;
 	// cout<<"Channel_capacity:"<<CHANNEL_CAP<<"\tMax_equivalence size:"<<*std::max_element(maxeqsizes.begin(),maxeqsizes.end())<<endl;
 	// myfile<<CHANNEL_CAP<<" "<<*std::max_element(maxeqsizes.begin(),maxeqsizes.end())<<endl;
-	// myfile.close();
+	if(FILE)
+		myfile.close();
     
 	return 0;
 }

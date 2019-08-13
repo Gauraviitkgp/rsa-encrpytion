@@ -7,20 +7,20 @@
 #include <vector>
 #include <fstream>
 #include <string>
-#include <set>
-#include <iterator>
 #include <chrono>
 #define ll long long
 
 using namespace std::chrono;
 using namespace std;
 
-int CHANNEL_CAP;	
+#define FILE true
+
+int CHANNEL_CAP=3000;	
 // #define P_chosen 997
 // #define Q_chosen 17
 
-int P_chosen;
-int Q_chosen;
+int P_chosen=103;
+int Q_chosen=17;
 
 class agent
 {
@@ -125,13 +125,13 @@ void get_all_mappings_of_msg(int msg, agent B,std::vector<int>& A, bool verbose)
 	}
 }
 
-void compute_max_equivalence_size(agent agent1,std::vector<int>& maxeqsizes,  bool verbose)
+void compute_equivalence_size(agent agent1,std::vector<int>& maxeqsizes,  bool verbose)
 {
 	std::vector<int> maps(agent1.n);	  // Vector to store all mappings of a message. With changing e, where does m goes
 	std::vector<int> non_zeros(agent1.n); //Vector to compute total non-zero mappings of a message
 
 	if(verbose)
-		cout<<"Primes:"<<Q_chosen<<","<<P_chosen<<"\tn:"<<Q_chosen*P_chosen<<endl;
+		cout<<"Primes:"<<Q_chosen<<","<<P_chosen<<"\tn:"<<Q_chosen*P_chosen;
 
 	for(int i=0; i < agent1.n;i++)
     {
@@ -146,7 +146,7 @@ void compute_max_equivalence_size(agent agent1,std::vector<int>& maxeqsizes,  bo
 	// printvec(non_zeros);
     maxeqsizes.push_back(*std::max_element(non_zeros.begin(),non_zeros.end()));
 	if(verbose)
-		cout<<"Max Equivalence size:"<<maxeqsizes[maxeqsizes.size()-1]<<endl<<endl;
+		cout<<"\nMax Equivalence size:"<<maxeqsizes[maxeqsizes.size()-1]<<endl<<endl;
 }
 
 
@@ -159,46 +159,57 @@ int main(int argc, char const *argv[])
 	std::vector<int> poss_p;//vector of possible p's such that it maximizes the channel cap usage
 	std::vector<int> poss_q;//possible q's
 
-    CHANNEL_CAP=1000;// Channel Capacity is max integer we can send via channel
-    P_chosen = 41; Q_chosen=13;
+    CHANNEL_CAP=2000;// Channel Capacity is max integer we can send via channel
+
     /* BEFORE HAND COMPUTATIONS */
 	cout<<"Starting before actual Transmission codes"<<endl;
-	cout<<"Channel capacity is "<<CHANNEL_CAP<<endl; //By channel cap i mean message capacity
-	cout<<"Chosen P:"<<P_chosen<<" and Chosen Q:"<<Q_chosen<<endl;
 
-	std::vector<int> maps(P_chosen*Q_chosen);
-	std::vector<int> mappings;
-
-	agent1.generate_static_keys();
-
-	cout<<"Value of n is:"<<agent1.n<<endl;
-
-	// printvec(mappings);
+	
 	ofstream myfile;
-	myfile.open("message_vs_eqclasssize_constpq.txt");
 
-	for (int i = 0; i < agent1.n; i++)
-	{	
-		std::fill(maps.begin(), maps.end(),0);
-		get_all_mappings_of_msg(i, agent1,maps,false);
-		cout<<"Message:"<<i;
-		cout<<"\tEquivalence Class Size:"<<count_non_zeros_vec(maps,mappings)<<endl;
-		myfile<<i<<" "<<count_non_zeros_vec(maps,mappings)<<endl;
-	}
-
-	myfile.close();
-
+	if(FILE)
+		myfile.open("capvsmax_eq_size.txt");
+	
 
 	std::vector<int> maxeqsizes;
 
+	// compute_all_possible_pairs(200, poss_p, poss_q,true);
+		
+	for (int j = 250; j < 2501; j+=250)
+	{
+		CHANNEL_CAP = j;
+		
+		poss_p.clear();
+		poss_q.clear();
+		
+		maxeqsizes.clear();
+		compute_opt_possible_pairs(CHANNEL_CAP, poss_p, poss_q,false);
+
+		for (int i = 0; i < poss_p.size(); i++)
+		{
+			
+			// Q_chosen = poss_p[poss_p.size()-1];
+			// P_chosen = poss_q[poss_q.size()-1];
+
+			Q_chosen = poss_q[i];
+			P_chosen = poss_p[i];
+			agent1.generate_static_keys();
+			compute_equivalence_size(agent1, maxeqsizes, false);			
+		}
+		if (FILE)
+			myfile<<CHANNEL_CAP<<" "<<*std::max_element(maxeqsizes.begin(),maxeqsizes.end())<<endl;
+		
+		cout<<"Channel_capacity:"<<CHANNEL_CAP<<"\tMax_equivalence size:"<<*std::max_element(maxeqsizes.begin(),maxeqsizes.end())<<endl;
+
+	}
 	
+	// printvec(maxeqsizes);
 	cout<<"Time to compute all possible pairs:"<<(float)(duration_cast<microseconds>( t2 - t1 ).count())/1000000<<" s"<<endl;
 	cout<<"Time for the entire looping process to calculate max possible pairs:"<<(float)(duration_cast<microseconds>( t5 - t3 ).count())/1000000<<" s"<<endl;
 	cout<<"Time to calculate 1 Equivalence class:"<<(float)(duration_cast<microseconds>( t5 - t4 ).count())/1000000<<" s"<<endl;
 	cout<<"Time required for computation of private static keys:"<<(float)(duration_cast<microseconds>( t4 - t3 ).count())/1000000<<" s"<<endl;
-	// cout<<"Channel_capacity:"<<CHANNEL_CAP<<"\tMax_equivalence size:"<<*std::max_element(maxeqsizes.begin(),maxeqsizes.end())<<endl;
-	// myfile<<CHANNEL_CAP<<" "<<*std::max_element(maxeqsizes.begin(),maxeqsizes.end())<<endl;
-	// myfile.close();
+	if(FILE)
+		myfile.close();
     
 	return 0;
 }

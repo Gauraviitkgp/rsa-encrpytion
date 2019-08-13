@@ -174,48 +174,21 @@ int main(int argc, char const *argv[])
 	cout<<"Value of n is:"<<agent1.n<<endl;
 
 
-	int m = 6
+	ofstream myfile;
+	myfile.open("map_of_single_msg.txt");
+
+	int m = atoi(argv[1]);
 
 	std::fill(maps.begin(), maps.end(),0);
-	get_all_mappings_of_msg(i, agent1,maps,false);
+	get_all_mappings_of_msg(m, agent1,maps,false);
 	cout<<"Message:"<<m;
 	cout<<"\tEquivalence Class Size:"<<count_non_zeros_vec(maps,mappings)<<endl;
-	myfile<<i<<" "<<count_non_zeros_vec(maps,mappings)<<endl;
 	printvec(mappings);
+	for (int i = 0; i < mappings.size(); ++i)
+		myfile<<mappings[i]<<endl;
 
-	/*
-	cout<<"Computing total Channel capacity "<<endl;
-	poss_p.clear();
-	poss_q.clear();
-
-	t1 = high_resolution_clock::now();
-	compute_all_possible_pairs(CHANNEL_CAP, poss_p, poss_q,false);
-	t2 = high_resolution_clock::now();
-	*/
-	std::vector<int> maxeqsizes;
-
+	myfile.close();
 	
-	// printvec(poss_p, poss_p.size());
-	// printvec(poss_q, poss_q.size());
-	/*
-	for (int i = 0; i < poss_p.size(); i++)
-	{
-		
-		// Q_chosen = poss_p[poss_p.size()-1];
-		// P_chosen = poss_q[poss_q.size()-1];
-
-		Q_chosen = poss_q[i];
-		P_chosen = poss_p[i];
-		t3 = high_resolution_clock::now();
-		agent1.generate_static_keys();
-		t4 = high_resolution_clock::now();
-		compute_equivalence_size(agent1, maxeqsizes, true);
-		// myfile<<P_chosen<<","<<Q_chosen<<" "<<maxeqsizes[maxeqsizes.size()-1]<<" "<<Q_chosen*P_chosen<<endl;
-		t5 = high_resolution_clock::now();
-
-	}
-	*/
-	// printvec(maxeqsizes);
 	cout<<"Time to compute all possible pairs:"<<(float)(duration_cast<microseconds>( t2 - t1 ).count())/1000000<<" s"<<endl;
 	cout<<"Time for the entire looping process to calculate max possible pairs:"<<(float)(duration_cast<microseconds>( t5 - t3 ).count())/1000000<<" s"<<endl;
 	cout<<"Time to calculate 1 Equivalence class:"<<(float)(duration_cast<microseconds>( t5 - t4 ).count())/1000000<<" s"<<endl;

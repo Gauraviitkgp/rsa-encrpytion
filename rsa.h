@@ -41,7 +41,7 @@ namespace
 	    srand((time_t)ts.tv_nsec);
 	}
 
-	void compute_all_possible_pairs(int capacity, std::vector<int>& p, std::vector<int>& q,bool verbose)
+	void compute_opt_possible_pairs(int capacity, std::vector<int>& p, std::vector<int>& q,bool verbose)
 	{
 		int flag=0;
 		int i=0;
@@ -61,6 +61,31 @@ namespace
 			}
 			else
 			{
+				flag=1;
+				i++;
+			}
+		}
+	}
+
+	void compute_all_possible_pairs(int capacity, std::vector<int>& p, std::vector<int>& q,bool verbose)
+	{
+		int flag=0;
+		int i=0;
+		for (int j = primes.size()-1; i < j; )
+		{
+			if (primes[i]*primes[j]>capacity)
+			{
+				i=0;
+				j--;
+				flag=0;
+			}
+			else
+			{
+				p.push_back(primes[i]);
+				q.push_back(primes[j]);
+				if(verbose)
+					cout<<"n:"<<p[p.size()-1]*q[q.size()-1]<<"\tp:"<<p[p.size()-1]<<"\tq:"<<q[q.size()-1]<<endl;
+
 				flag=1;
 				i++;
 			}
