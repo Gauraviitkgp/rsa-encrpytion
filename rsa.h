@@ -25,7 +25,8 @@ namespace
 			cout<<"A["<<i<<"]:"<<A[i]<<endl;
 	}
 
-	void printvec(std::vector<int>& A)
+	template <typename T> 
+	void printvec(std::vector<T>& A)
 	{
 		for (int i = 0; i < A.size(); ++i)
 			cout<<"A["<<i<<"]:"<<A[i]<<endl;
@@ -65,7 +66,7 @@ namespace
 				i++;
 			}
 		}
-	}
+	}// 13 19: 8 14 8 14 9 
 
 	void compute_all_possible_pairs(int capacity, std::vector<int>& p, std::vector<int>& q,bool verbose)
 	{

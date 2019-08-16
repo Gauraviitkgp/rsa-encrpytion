@@ -161,6 +161,7 @@ int main(int argc, char const *argv[])
 
     CHANNEL_CAP=1000;// Channel Capacity is max integer we can send via channel
     P_chosen = 41; Q_chosen=13;
+    
     /* BEFORE HAND COMPUTATIONS */
 	cout<<"Starting before actual Transmission codes"<<endl;
 	cout<<"Channel capacity is "<<CHANNEL_CAP<<endl; //By channel cap i mean message capacity
