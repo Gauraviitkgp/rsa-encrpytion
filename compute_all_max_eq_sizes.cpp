@@ -5,7 +5,7 @@
 #include "agent.h" //Header File for Agent Related operations
 // #include <assert.h>
 
-#define max_prime 131
+#define max_prime 181
 #define FILE true
 
 using namespace std;
@@ -22,11 +22,12 @@ int main()
 	vector<int>::iterator it = find(primes.begin(), primes.end(), max_prime);
 
 	int size = it-primes.begin();
-	cout<<size;
 	
-	for (int i = 0; i <= size; i++)
+	cout<<size;
+
+	for (int i = size; i >=0; i--)
 	{
-		for(int j = size; j>=i; j--)
+		for(int j = 0; j<=i; j++)
 		{
 			eqsizes.clear(); 
 			
