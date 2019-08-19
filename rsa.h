@@ -32,6 +32,19 @@ namespace
 			cout<<"A["<<i<<"]:"<<A[i]<<endl;
 	}
 
+	template <typename T> 
+	void print2dvec(vector< vector<T> >& A)
+	{
+		for (int i = 0; i < A.size(); i++)
+		{
+			for (int j = 0; j < A[i].size(); j++)
+			{
+				cout<<A[i][j]<<" ";
+			}
+			cout<<endl;
+		}
+	}
+
 	void randomise_seed()
 	{
 		// RANDOMISING SEED

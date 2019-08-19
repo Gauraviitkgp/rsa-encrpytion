@@ -158,13 +158,12 @@ namespace
 
 			visited[Jtemp]=true;
 			
-			
 			if(verbose)
 				cout<<"i:"<<i<<"\tc[i]:"<<ctemp<<"\tmsg:"<<msg<<"\tJ:"<<Jtemp<<endl;
 		}
 	}
 
-	void compute_equivalence_size_opt(agent agent1,vector<int>& maxeqsizes,  bool verbose)
+	vector< vector<int> > compute_equivalence_size_opt(agent agent1,vector<int>& maxeqsizes,  bool verbose)
 	{
 		vector< vector<int> > classes;
 		vector<int> maps;	  // Vector to store all mappings of a message. With changing e, where does m goes
@@ -191,6 +190,8 @@ namespace
 
 	    if(verbose)
 			cout<<"\nNumber of classes is :"<<classes.size()<<endl<<endl;
+
+		return classes;
 	}
 
 }
